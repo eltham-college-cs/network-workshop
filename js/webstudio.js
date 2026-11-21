@@ -6,13 +6,13 @@
 window.NB = window.NB || {};
 
 NB.WebStudio = (function () {
-  const STORAGE_KEY = 'y8-nb-website-v2';
+  const STORAGE_KEY = 'y8-nb-website-v3';
   const NAVVY_BASE = 'https://eltham-college-cs.github.io/navvy-builds/';
 
   const STARTERS = {
     guided: {
-      html: '<!-- Level 1: type your main heading on the next line -->\n',
-      css: '/* Level 4: add your CSS rules here */\n'
+      html: '<h1>My hobby</h1>\n<p>Write a sentence about it here.</p>\n<ul>\n  <li>First thing</li>\n  <li>Second thing</li>\n  <li>Third thing</li>\n</ul>\n',
+      css: '/* A CSS rule:   selector { property: value; }   */\n\n'
     },
     paste: { html: '', css: '' },
     independent: {
@@ -31,65 +31,72 @@ NB.WebStudio = (function () {
     new RegExp('(^|[},\\s])' + sel + '\\s*(,[^{]*)?\\{[^}]*' + prop + '\\s*:\\s*[^;}\\s]', 'i').test(css);
 
   /* Guided levels. Each goal: label, test(html, css), hints[] */
+  /* The HTML is given as a starter, so most of the guidance is for the CSS. */
+  const CHEAT = 'selector { property: value; }\n\nh1 { color: darkblue; }\n│    │      └ value (ends with ;)\n│    └ property\n└ selector: the tag you want to style';
+  const txt = (h, tag) => inner(h, tag).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
   const LEVELS = [
     {
-      name: 'Heading',
-      intro: 'Every page needs a main heading. Tell visitors what your page is about.',
-      goals: [{
-        label: 'Add a main heading with <h1> about your hobby',
-        test: (h) => words(inner(h, 'h1')) >= 1,
-        hints: ['A heading starts with <h1> and ends with </h1>. Your words go in between.', 'Type this, with your own hobby: <h1>Skateboarding</h1>']
-      }]
-    },
-    {
-      name: 'Paragraph',
-      intro: 'Paragraphs hold your sentences. Say something about your hobby.',
-      goals: [{
-        label: 'Add a paragraph with <p> that has 5 or more words',
-        test: (h) => words(inner(h, 'p')) >= 5,
-        hints: ['A paragraph starts with <p> and ends with </p>. Put it on a new line under your heading.', 'Type this, in your own words: <p>I skate at the park every Saturday.</p>']
-      }]
-    },
-    {
-      name: 'List',
-      intro: 'Lists make things easy to read. Add your top three.',
-      goals: [{
-        label: 'Add a list with <ul> that has 3 <li> items',
-        test: (h) => /<ul\b[^>]*>[\s\S]*<\/ul>/i.test(h) && (inner(h, 'ul').match(/<li\b[^>]*>[\s\S]*?\S[\s\S]*?<\/li>/gi) || []).length >= 3,
-        hints: ['A list is <ul> ... </ul>. Each item inside it is <li> ... </li>.', 'Type:\n<ul>\n  <li>Ollie</li>\n  <li>Kickflip</li>\n  <li>Manual</li>\n</ul>']
-      }]
-    },
-    {
-      name: 'Style it',
-      intro: 'HTML is the content. CSS is the style. Click the style.css tab for this level.',
+      name: 'Your content (HTML)',
+      intro: 'The HTML is started for you. Change the words between the tags so the page is about your hobby.',
       goals: [
-        {
-          label: 'In style.css, give your h1 a colour',
-          test: (h, c) => cssRule(c, 'h1', 'color'),
-          hints: ['Click the style.css tab. A CSS rule says what to style, then how, inside curly brackets.', 'Type this in style.css: h1 { color: darkblue; }']
-        },
-        {
-          label: 'In style.css, give the body a background colour',
-          test: (h, c) => cssRule(c, 'body', 'background(-color)?'),
-          hints: ['The body is the whole page. Its rule starts with: body {', 'Type this in style.css: body { background: lightyellow; }']
-        }
+        { label: 'Change the <h1> heading to the name of your hobby',
+          test: (h) => words(inner(h, 'h1')) >= 1 && !/^my hobby$/i.test(txt(h, 'h1')),
+          hints: ['Only change the words between <h1> and </h1>. Leave the tags alone.', 'For example: <h1>Skateboarding</h1>'] },
+        { label: 'Rewrite the <p> paragraph in your own words (5 or more)',
+          test: (h) => words(inner(h, 'p')) >= 5 && !/write a sentence about it here/i.test(inner(h, 'p')),
+          hints: ['Change the words between <p> and </p>.', 'For example: <p>I skate at the park every Saturday.</p>'] },
+        { label: 'Change the three <li> list items to your top three',
+          test: (h) => (inner(h, 'ul').match(/<li\b[^>]*>[\s\S]*?\S[\s\S]*?<\/li>/gi) || []).length >= 3 && !/(first|second|third) thing/i.test(inner(h, 'ul')),
+          hints: ['Each list item sits between <li> and </li>.', 'For example: <li>Ollie</li>'] }
       ]
     },
     {
-      name: 'Make it yours',
+      name: 'CSS: colour', css: true, cheat: CHEAT,
+      intro: 'HTML is the content, CSS is the style. Click the style.css tab. Every rule has the same shape, shown below.',
+      goals: [
+        { label: 'Give your h1 heading a colour',
+          test: (h, c) => cssRule(c, 'h1', 'color'),
+          hints: ['Start with the selector, the tag you want to style: h1', 'Then curly brackets with a property and a value inside: h1 { color: ____; }', 'Type this in style.css:\nh1 { color: darkblue; }\nOther colours to try: crimson, teal, purple, darkgreen'] },
+        { label: 'Give the whole page (body) a background colour',
+          test: (h, c) => cssRule(c, 'body', 'background(-color)?'),
+          hints: ['The selector for the whole page is: body', 'The property is background. Shape: body { background: ____; }', 'Type this on a new line in style.css:\nbody { background: lightyellow; }\nOther colours to try: lavender, mintcream, aliceblue'] }
+      ]
+    },
+    {
+      name: 'CSS: text', css: true, cheat: CHEAT,
+      intro: 'Now style the words. You can put more than one property inside the same curly brackets, one per line.',
+      goals: [
+        { label: 'Change the font of the page with font-family',
+          test: (h, c) => /font-family\s*:\s*[^;}\s]/i.test(c),
+          hints: ['font-family goes inside your body rule, so every tag on the page uses it.', 'Add a second line inside the curly brackets. Do not forget the semicolon.', 'Your body rule should look like this:\nbody {\n  background: lightyellow;\n  font-family: sans-serif;\n}\nOther fonts to try: Georgia, Verdana, monospace'] },
+        { label: 'Centre your h1 heading with text-align',
+          test: (h, c) => cssRule(c, 'h1', 'text-align'),
+          hints: ['text-align goes inside your h1 rule.', 'The value you need is: center (American spelling).', 'Your h1 rule should look like this:\nh1 {\n  color: darkblue;\n  text-align: center;\n}'] }
+      ]
+    },
+    {
+      name: 'CSS: boxes', css: true, cheat: CHEAT,
+      intro: 'Every tag is a box. Give your list its own background and some space inside it.',
+      goals: [
+        { label: 'Give your list (ul) a background colour',
+          test: (h, c) => cssRule(c, 'ul', 'background(-color)?'),
+          hints: ['You need a new rule. Its selector is: ul', 'Shape: ul { background: ____; }', 'Type this on a new line in style.css:\nul { background: white; }'] },
+        { label: 'Give the list some space inside with padding',
+          test: (h, c) => cssRule(c, 'ul', 'padding'),
+          hints: ['padding is the space between the edge of a box and its contents. It goes inside your ul rule.', 'The value is a number of pixels, written like this: 20px', 'Your ul rule should look like this:\nul {\n  background: white;\n  padding: 20px 40px;\n}'] }
+      ]
+    },
+    {
+      name: 'Make it yours', css: true, cheat: CHEAT,
       bonus: true,
       intro: 'Bonus level. You can deploy now, or polish your page first.',
       goals: [
-        {
-          label: 'Add a smaller heading with <h2>',
+        { label: 'Add a smaller heading with <h2> above your list (HTML)',
           test: (h) => words(inner(h, 'h2')) >= 1,
-          hints: ['<h2> works just like <h1> but is smaller. Use it above your list.', 'Type: <h2>My best tricks</h2>']
-        },
-        {
-          label: 'In style.css, change the font with font-family',
-          test: (h, c) => /font-family\s*:\s*[^;}\s]/i.test(c),
-          hints: ['font-family goes inside a rule, like the body rule.', 'Add this line inside your body rule: font-family: sans-serif;']
-        }
+          hints: ['<h2> works just like <h1> but is smaller. Put it on the line above <ul>.', 'Type in index.html: <h2>My top three</h2>'] },
+        { label: 'Round the corners of your list with border-radius',
+          test: (h, c) => /border-radius\s*:\s*[^;}\s]/i.test(c),
+          hints: ['border-radius goes inside your ul rule.', 'Add this line inside the curly brackets of ul:\n  border-radius: 12px;'] }
       ]
     }
   ];
@@ -121,12 +128,19 @@ NB.WebStudio = (function () {
     deployedCss: ''
   };
 
-  try {
+  if (NB.DEMO) {
+    // Teacher demo: a finished page is already built, so the network missions can be shown straight away. Nothing is saved.
+    Object.assign(data, { level: LEVELS.length, ready: true, deployed: true, version: 1, site: 'skate-club',
+      html: '<h1>Skate Club</h1>\n<p>We meet at the park every Saturday morning.</p>\n<ul>\n  <li>Ollie</li>\n  <li>Kickflip</li>\n  <li>Manual</li>\n</ul>\n',
+      css: 'body {\n  background: lightyellow;\n  font-family: sans-serif;\n}\nh1 {\n  color: darkblue;\n  text-align: center;\n}\nul {\n  background: white;\n  padding: 20px 40px;\n}\n' });
+    data.deployedHtml = data.html; data.deployedCss = data.css;
+  } else try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
     if (saved && typeof saved.html === 'string') data = Object.assign(data, saved);
   } catch (e) {}
 
   function save() {
+    if (NB.DEMO) return;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
   }
 
@@ -232,7 +246,7 @@ NB.WebStudio = (function () {
     if (allDone) {
       h += '<p class="lv-intro">Brilliant. Your page is ready for the Web Server.</p>';
     } else {
-      h += `<p class="lv-intro">${esc(lv.intro)}</p><ul class="lv-goals">`;
+      h += `<p class="lv-intro">${esc(lv.intro)}</p>` + (lv.cheat ? `<pre class="lv-hint lv-cheat" aria-label="CSS reminder">${esc(lv.cheat)}</pre>` : '') + '<ul class="lv-goals">';
       lv.goals.forEach((g, gi) => {
         const pass = g.test(data.html, data.css);
         const key = lvIdx + '-' + gi;

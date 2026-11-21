@@ -16,7 +16,7 @@
     dragging: null,
     busy: false,
     hint: false,
-    teacher: location.hash === '#teacher',
+    teacher: ['teacher', 'teacher_code', 'demo'].includes(NB.MODE),
     done: {},
     boards: [],
     meta: [],
@@ -26,7 +26,7 @@
     timerHandle: null
   };
 
-  try {
+  if (!NB.DEMO) try {
     state.done = JSON.parse(localStorage.getItem(DONE_KEY) || '{}') || {};
     state.just = JSON.parse(localStorage.getItem(JUST_KEY) || '{}') || {};
   } catch (e) {}
@@ -53,6 +53,7 @@
 
   function saveDone() {
     try {
+      if (NB.DEMO) return;
       localStorage.setItem(DONE_KEY, JSON.stringify(state.done));
       localStorage.setItem(JUST_KEY, JSON.stringify(state.just));
     } catch (e) {}
@@ -1180,7 +1181,8 @@
       });
     });
 
-    selectMission(location.hash === '#pro' ? PRO_START : 0);
+    if (NB.DEMO || NB.MODE === 'core') document.body.classList.add(NB.DEMO ? 'mode-demo' : 'mode-core');
+    selectMission(NB.MODE === 'pro' ? PRO_START : NB.DEMO ? 4 : 0);   // the demo opens on the firewall mission
   }
 
   window.addEventListener('hashchange', () => location.reload());

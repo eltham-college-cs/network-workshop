@@ -1,6 +1,10 @@
 /* Device catalogue & crisp SVG icon templates for Year 8 Network Builder */
 window.NB = window.NB || {};
 NB.dc = e => [...atob(e)].map(c => String.fromCharCode(c.charCodeAt(0) ^ 23)).reverse().join('');
+/* Address modes: #demo (teacher demo for slides: nothing saved, core missions open, starts at the firewall),
+   #core (pupil link with the Pro missions hidden), #teacher or #teacher_code (everything unlocked), #pro. */
+NB.MODE = (location.hash || '').slice(1).toLowerCase();
+NB.DEMO = NB.MODE === 'demo';
 
 NB.DEVICES = {
   pc: {
