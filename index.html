@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Year 8 Network Builder Workshop · Eltham College</title>
+  <meta name="description" content="30-minute Year 8 Computing networking workshop: clients, servers, routers, firewalls, Ethernet, Wi-Fi, fibre optic, internet cloud, and Na&lt;&gt;y Builds web deployment.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=JetBrains+Mono:wght@500;700&family=Nunito:wght@600;700;800;900&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-inner">
+      <div class="brand">
+        <div class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="38" height="38">
+            <rect x="2" y="2" width="36" height="36" rx="10" fill="#FFC83D" stroke="#1B2440" stroke-width="3"/>
+            <circle cx="20" cy="20" r="5" fill="#FF8A3D" stroke="#1B2440" stroke-width="2.5"/>
+            <circle cx="10" cy="11" r="3.5" fill="#3D8BFF" stroke="#1B2440" stroke-width="2"/>
+            <circle cx="30" cy="11" r="3.5" fill="#8B5CF6" stroke="#1B2440" stroke-width="2"/>
+            <circle cx="10" cy="29" r="3.5" fill="#22C493" stroke="#1B2440" stroke-width="2"/>
+            <circle cx="30" cy="29" r="3.5" fill="#FF5D8F" stroke="#1B2440" stroke-width="2"/>
+            <path d="M13 13 L16.5 16.5 M27 13 L23.5 16.5 M13 27 L16.5 23.5 M27 27 L23.5 23.5" stroke="#1B2440" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Network Builder Workshop <span class="badge-y8">Year 8</span></h1>
+          <p class="sub">Eltham College Computing · Challenge Lab + Pro Missions + Na&lt;&gt;y Builds</p>
+        </div>
+      </div>
+
+      <div class="top-controls">
+        <div class="progress-pill" title="Missions completed">
+          <span class="pill-label">Progress</span>
+          <div class="prog-bar"><div id="prog-fill" class="prog-fill"></div></div>
+          <strong id="prog-text">0 / 8</strong>
+        </div>
+
+        <button id="btn-timer" class="hdr-btn" type="button" title="Start or pause the 30-minute workshop timer">
+          ⏱ <span id="timer-display">30:00</span>
+        </button>
+
+        <button id="btn-passport" class="hdr-btn" type="button" title="View your completed code words and concepts">
+          🏅 Passport
+        </button>
+
+        <button id="btn-teacher" class="hdr-btn hdr-btn-ghost" type="button" title="Toggle Teacher Mode (unlocks all missions)">
+          👩‍🏫 Teacher
+        </button>
+
+        <button id="btn-theme" class="hdr-btn hdr-btn-icon" type="button" aria-label="Toggle dark mode" title="Toggle light/dark theme">
+          🌙
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="mission-bar" aria-label="Workshop missions">
+    <div class="wrap">
+      <div class="track-switch" role="group" aria-label="Mission set">
+        <button id="track-core" class="track-btn" type="button">Core missions</button>
+        <button id="track-pro" class="track-btn" type="button">Pro missions</button>
+      </div>
+      <div id="mission-tabs" class="mission-tabs" role="tablist"></div>
+    </div>
+  </nav>
+
+  <main class="wrap workspace">
+    <!-- Left Sidebar: Mission Brief, Checklist, Smart Nudges & Action -->
+    <aside class="sidebar">
+      <section class="card mission-card">
+        <div class="mission-meta">
+          <span id="m-badge" class="m-badge">Mission 1</span>
+          <span id="m-time" class="m-time">~3 min</span>
+          <span id="m-stars" class="m-stars" aria-label="Difficulty">★</span>
+        </div>
+        <h2 id="m-title">Save Your Homework</h2>
+        <p id="m-brief" class="m-brief"></p>
+
+        <div id="web-studio-cta" class="studio-cta" hidden>
+          <div class="studio-cta-info">
+            <strong>Na&lt;&gt;y Builds Web Studio</strong>
+            <span id="studio-status" class="studio-status">Not deployed yet</span>
+          </div>
+          <button id="btn-open-studio" class="btn btn-grape" type="button">
+            &lt;/&gt; Open Web Studio
+          </button>
+        </div>
+
+        <div class="checklist-wrap">
+          <div class="checklist-head">
+            <h3>Mission Checklist</h3>
+            <span id="check-count" class="check-count">0/0</span>
+          </div>
+          <ul id="checklist" class="checklist"></ul>
+        </div>
+
+        <div id="nudge-box" class="nudge-box" hidden role="status" aria-live="polite">
+          <span class="nudge-icon">💡</span>
+          <p id="nudge-text"></p>
+        </div>
+
+        <div id="cable-stats" class="cable-stats" hidden></div>
+
+        <div class="mission-actions">
+          <button id="btn-run" class="btn btn-primary btn-run" type="button">
+            ▶ Test Network
+          </button>
+          <div class="secondary-actions">
+            <button id="btn-hint" class="btn btn-soft" type="button">👁 Layout Hint</button>
+            <button id="btn-reset" class="btn btn-soft" type="button">↺ Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card log-card">
+        <div class="log-head">
+          <h3>Network Activity Log</h3>
+          <button id="btn-clear-log" class="link-btn" type="button">Clear</button>
+        </div>
+        <div id="log-list" class="log-list" aria-live="polite"></div>
+      </section>
+    </aside>
+
+    <!-- Right Main Stage: Tools, Palette & Interactive SVG Canvas -->
+    <section class="stage-col">
+      <div class="card toolbar-card">
+        <div class="tool-group">
+          <span class="group-label">Tools</span>
+          <button class="tool-btn active" data-tool="move" type="button" title="Select and drag devices">
+            ✋ Move
+          </button>
+          <button class="tool-btn" data-tool="eth" type="button" title="Ethernet cable (copper electrical pulses — wired inside a building)">
+            <span class="swatch swatch-eth"></span> Ethernet
+          </button>
+          <button class="tool-btn" data-tool="wifi" type="button" title="Wi-Fi connection (radio waves — portable wireless devices)">
+            <span class="swatch swatch-wifi"></span> Wi-Fi
+          </button>
+          <button class="tool-btn" data-tool="fibre" type="button" title="Fibre optic cable (pulses of light — fast long-distance links)">
+            <span class="swatch swatch-fibre"></span> Fibre Optic
+          </button>
+          <button class="tool-btn tool-btn-danger" data-tool="delete" type="button" title="Click a device or cable to remove it">
+            🗑 Remove
+          </button>
+        </div>
+
+        <div class="palette-group">
+          <span class="group-label">Add Hardware</span>
+          <div id="palette" class="palette"></div>
+        </div>
+      </div>
+
+      <div class="card canvas-card">
+        <div class="canvas-topbar">
+          <span id="tool-tip" class="tool-tip">Drag devices onto the board, or choose a cable tool and click two devices to connect them.</span>
+          <div class="canvas-legend">
+            <span><i class="dot dot-eth"></i>Ethernet</span>
+            <span><i class="dot dot-wifi"></i>Wi-Fi</span>
+            <span><i class="dot dot-fibre"></i>Fibre</span>
+            <span><i class="dot dot-req"></i>Packet</span>
+            <span><i class="dot dot-bad"></i>Threat/Fault</span>
+          </div>
+        </div>
+
+        <div class="svg-wrap">
+          <svg id="board" viewBox="0 0 960 560" role="img" aria-label="Interactive network diagram canvas">
+            <defs>
+              <pattern id="grid-dots" width="24" height="24" patternUnits="userSpaceOnUse">
+                <circle cx="12" cy="12" r="1.4" class="grid-dot"/>
+              </pattern>
+              <filter id="soft-shadow" x="-15%" y="-15%" width="130%" height="130%">
+                <feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#1B2440" flood-opacity="0.16"/>
+              </filter>
+            </defs>
+            <rect width="960" height="560" fill="url(#grid-dots)"/>
+            <g id="layer-zones"></g>
+            <g id="layer-ghosts"></g>
+            <g id="layer-links"></g>
+            <g id="layer-devices"></g>
+            <g id="layer-fx"></g>
+          </svg>
+        </div>
+
+        <!-- Inline interactive quiz/recovery strip (used in Mission 8 Lost Packet) -->
+        <div id="interactive-bar" class="interactive-bar" hidden></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Na<>y Builds Web Studio Modal -->
+  <div id="modal-studio" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="studio-title">
+    <div class="modal modal-wide modal-studio">
+      <div class="modal-head modal-head-grape">
+        <div>
+          <h2 id="studio-title">Na&lt;&gt;y Builds · Web Studio</h2>
+          <p class="modal-sub">Build your page, then send it across the network to the Web Server.</p>
+        </div>
+        <button class="modal-close" data-close="modal-studio" type="button" aria-label="Close">✕</button>
+      </div>
+
+      <div class="studio-modes" role="group" aria-label="How do you want to build?">
+        <button class="studio-mode" data-mode="guided" type="button"><strong>Guided</strong><span>Levels and hints</span></button>
+        <button class="studio-mode" data-mode="paste" type="button"><strong>Paste</strong><span>My Na&lt;&gt;y Builds page</span></button>
+        <button class="studio-mode" data-mode="independent" type="button"><strong>Independent</strong><span>Extension, no hints</span></button>
+      </div>
+
+      <div class="studio-body">
+        <div class="studio-editor-col">
+          <div id="studio-guided" class="studio-panel"></div>
+          <div id="studio-paste" class="studio-panel" hidden>
+            <div class="lv-head"><strong>Paste your Na&lt;&gt;y Builds page</strong></div>
+            <p class="lv-intro">In Na&lt;&gt;y Builds press <b>Download my page</b>, open the file, copy <b>all</b> of the code and paste it here.</p>
+            <label class="sr-only" for="paste-box">Paste your page code</label>
+            <textarea id="paste-box" class="code-area paste-box" spellcheck="false" placeholder="&lt;!DOCTYPE html&gt; ... paste everything here"></textarea>
+            <div class="lv-foot">
+              <button type="button" id="btn-use-paste" class="btn btn-grape btn-check">Use my page</button>
+              <span id="paste-msg" class="lv-feedback" role="status">Your HTML goes into index.html and your styles into style.css.</span>
+            </div>
+          </div>
+          <div id="studio-independent" class="studio-panel" hidden></div>
+
+          <div class="studio-toolbar">
+            <div class="studio-tabs">
+              <button class="studio-tab active" data-file="html" type="button">index.html</button>
+              <button class="studio-tab" data-file="css" type="button">style.css</button>
+            </div>
+            <button id="btn-studio-restart" class="link-btn" type="button">Start again</button>
+          </div>
+
+          <textarea id="code-html" class="code-area" spellcheck="false" aria-label="HTML code for index.html"></textarea>
+          <textarea id="code-css" class="code-area" spellcheck="false" aria-label="CSS code for style.css" hidden></textarea>
+          <p class="editor-tip">In the editor, Tab indents.</p>
+
+          <div id="studio-checks" class="studio-checks">
+            <h4>Page checks</h4>
+            <ul id="studio-check-list" class="studio-check-list"></ul>
+          </div>
+        </div>
+
+        <div class="studio-preview-col">
+          <div class="browser-chrome">
+            <span class="b-dot red"></span><span class="b-dot yellow"></span><span class="b-dot green"></span>
+            <span id="studio-url" class="b-url">preview only</span>
+          </div>
+          <iframe id="studio-preview" class="preview-frame" title="Live webpage preview" sandbox=""></iframe>
+          <div class="site-name-row">
+            <label for="site-name">Your web address</label>
+            <span class="site-addr">www.<input id="site-name" type="text" maxlength="18" spellcheck="false" autocomplete="off">.eltham</span>
+          </div>
+          <div class="studio-deploy-bar">
+            <span id="deploy-hint" class="deploy-hint"></span>
+            <button id="btn-deploy" class="btn btn-primary" type="button">Ready to deploy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All clients view: every client's browser side by side -->
+  <div id="modal-clients" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="clients-title">
+    <div class="modal modal-wide">
+      <div class="modal-head">
+        <div>
+          <h2 id="clients-title">Your page on every client</h2>
+          <p id="clients-sub" class="modal-sub">One Web Server, lots of clients.</p>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div id="clients-grid" class="clients-grid"></div>
+        <p id="clients-msg" class="clients-msg" role="status"></p>
+      </div>
+      <div class="modal-foot">
+        <button id="btn-clients-continue" class="btn btn-primary" type="button">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firewall duty: allow or block each packet -->
+  <div id="modal-duty" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="duty-title">
+    <div class="modal modal-wide">
+      <div class="modal-head modal-head-berry">
+        <div>
+          <h2 id="duty-title">Firewall duty: allow or block?</h2>
+          <p class="modal-sub">You are the Firewall. Check every packet at the edge of the school network.</p>
+        </div>
+        <div id="duty-score" class="duty-score"></div>
+      </div>
+      <div id="duty-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Firewall rule builder -->
+  <div id="modal-rules" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="rules-title">
+    <div class="modal modal-wide">
+      <div class="modal-head modal-head-berry">
+        <div>
+          <h2 id="rules-title">Firewall rules</h2>
+          <p class="modal-sub">The Firewall reads your rules from the top. The first rule that fits a packet wins.</p>
+        </div>
+        <button class="modal-close" data-close="modal-rules" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body rules-body">
+        <div>
+          <div id="rules-list" class="rules-list"></div>
+          <button id="btn-add-rule" class="btn btn-soft" type="button">+ Add a rule</button>
+        </div>
+        <div>
+          <h4 class="rules-h">Test traffic</h4>
+          <div id="rules-results" class="rules-results"></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <span id="rules-msg" class="rules-msg" role="status"></span>
+        <button id="btn-test-rules" class="btn btn-primary" type="button">▶ Test my rules</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client Mini-Browser Modal (shows rendered site arriving on the client!) -->
+  <div id="modal-browser" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="client-browser-title">
+    <div class="modal modal-browser">
+      <div class="modal-head">
+        <div>
+          <h2 id="client-browser-title">Client Browser Received Your Page!</h2>
+          <p id="client-browser-sub" class="modal-sub"></p>
+        </div>
+        <button class="modal-close" data-close="modal-browser" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="browser-chrome">
+          <span class="b-dot red"></span><span class="b-dot yellow"></span><span class="b-dot green"></span>
+          <span id="client-browser-url" class="b-url">http://web-server.eltham.sch.uk/index.html</span>
+        </div>
+        <iframe id="client-browser-frame" class="preview-frame preview-frame-tall" title="Client browser output" sandbox="allow-same-origin"></iframe>
+        <div id="packet-inspect" class="packet-inspect"></div>
+      </div>
+      <div class="modal-foot">
+        <button id="btn-browser-continue" class="btn btn-primary" type="button">Continue →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mission Debrief, Mini-Quiz & Unlock Modal -->
+  <div id="modal-debrief" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="debrief-title">
+    <div class="modal">
+      <div class="modal-head modal-head-mint">
+        <div>
+          <span id="debrief-kicker" class="debrief-kicker">Mission Complete!</span>
+          <h2 id="debrief-title">Great work!</h2>
+        </div>
+        <button class="modal-close" data-close="modal-debrief" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="debrief-takeaway" class="takeaway-box"></div>
+
+        <div id="debrief-predict" class="predict-result" hidden></div>
+
+        <div id="debrief-quiz" class="quiz-box">
+          <h4>Quick Check to Unlock Next Mission</h4>
+          <p id="quiz-q" class="quiz-q"></p>
+          <div id="quiz-options" class="quiz-options"></div>
+          <p id="quiz-feedback" class="quiz-feedback" hidden></p>
+        </div>
+
+        <div id="debrief-justify" class="quiz-box justify-box" hidden>
+          <h4>Justify it to get your code word</h4>
+          <label id="justify-prompt" class="quiz-q" for="justify-text"></label>
+          <textarea id="justify-text" class="justify-text" rows="3"></textarea>
+          <p id="justify-keys" class="justify-keys"></p>
+          <div class="justify-foot">
+            <button id="btn-justify" class="btn btn-primary" type="button">Check my answer</button>
+            <span id="justify-feedback" class="quiz-feedback" role="status"></span>
+          </div>
+        </div>
+
+        <div id="debrief-unlock" class="unlock-box" hidden>
+          <div class="code-badge">
+            <span>Exercise Book Code Word</span>
+            <strong id="debrief-code">ROUTER</strong>
+          </div>
+          <p id="debrief-next-msg" class="next-msg"></p>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-soft" data-close="modal-debrief" type="button">Stay on Board</button>
+        <button id="btn-next-mission" class="btn btn-primary" type="button" hidden>Unlock &amp; Start Next Mission →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workshop Passport / Summary Modal -->
+  <div id="modal-passport" class="modal-backdrop" hidden role="dialog" aria-modal="true" aria-labelledby="passport-title">
+    <div class="modal modal-wide">
+      <div class="modal-head">
+        <div>
+          <h2 id="passport-title">🏅 Year 8 Network Builder Passport</h2>
+          <p class="modal-sub">Record your code words in your exercise book and review key concepts for the exit quiz.</p>
+        </div>
+        <button class="modal-close" data-close="modal-passport" type="button" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="passport-grid" class="passport-grid"></div>
+        <div id="passport-just" class="passport-just"></div>
+        <div class="passport-recap">
+          <h4>Key Vocabulary Checklist</h4>
+          <div class="vocab-chips">
+            <span><strong>Client</strong> requests services</span>
+            <span><strong>Server</strong> provides services (File, Print, Web)</span>
+            <span><strong>Router</strong> connects devices &amp; acts as internet gateway</span>
+            <span><strong>Firewall</strong> inspects &amp; blocks unauthorised traffic</span>
+            <span><strong>Ethernet</strong> copper electrical signals (LAN)</span>
+            <span><strong>Wi-Fi</strong> radio waves (portable devices)</span>
+            <span><strong>Fibre Optic</strong> pulses of light (fast, long distance)</span>
+            <span><strong>Packets</strong> numbered chunks with header + data</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button id="btn-reset-all" class="btn btn-danger-soft" type="button">Reset All Progress</button>
+        <button class="btn btn-primary" data-close="modal-passport" type="button">Back to Workshop</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/devices.js"></script>
+  <script src="js/webstudio.js"></script>
+  <script src="js/missions.js"></script>
+  <script src="js/duty.js"></script>
+  <script src="js/pro.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
