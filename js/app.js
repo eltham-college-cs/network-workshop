@@ -314,7 +314,8 @@
       }
 
       const hit = svgEl('line', { x1: A.x, y1: A.y, x2: Bdev.x, y2: Bdev.y, class: 'link-hit' });
-      hit.addEventListener('click', (ev) => {
+      // pointerdown (not click): works with mouse, trackpad, touchscreens and pens
+      hit.addEventListener('pointerdown', (ev) => {
         ev.stopPropagation();
         if (state.busy) return;
         if (state.tool === 'delete') {
@@ -435,7 +436,9 @@
     window.addEventListener('pointerup', () => {
       state.dragging = null;
     });
-    svg.addEventListener('click', () => {
+    // Deselect on empty board space. Uses pointerdown because the board re-renders on
+    // every press, and touch/pen (and some browsers) then send the follow-up click to the board itself.
+    svg.addEventListener('pointerdown', () => {
       if (state.selectedId) {
         state.selectedId = null;
         renderBoard();
