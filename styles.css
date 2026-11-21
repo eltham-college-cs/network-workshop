@@ -1083,3 +1083,8 @@ header.top {
 .just-item p { margin: 3px 0 0; font-weight: 700; }
 .pass-item.pro { border-style: dashed; }
 .modal-studio .code-area { min-height: 170px; }
+
+/* address modes */
+.lv-cheat { border-style: solid; background: var(--sky-soft); margin: 6px 0 2px; }
+body.mode-demo #btn-timer, body.mode-demo #btn-passport, body.mode-demo #btn-teacher, body.mode-demo .track-switch,
+body.mode-core .track-switch, body.mode-core #btn-teacher { display: none !important; }
