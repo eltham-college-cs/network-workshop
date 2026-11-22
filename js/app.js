@@ -58,6 +58,8 @@
       localStorage.setItem(JUST_KEY, JSON.stringify(state.just));
     } catch (e) {}
   }
+  // #core (the pupil link) and #demo show the core missions only. Removing #core from the address brings the Pro missions back.
+  const CORE_ONLY = NB.MODE === 'core' || NB.DEMO;
   const trackOf = (i) => (i >= PRO_START ? 'pro' : 'core');
   const missionName = (m) => (m.track === 'pro' ? `Pro Mission ${m.proNum}` : `Mission ${m.id + 1}`);
 
@@ -950,9 +952,9 @@
       document.getElementById('debrief-next-msg').textContent = !next
         ? 'You have completed every Pro mission. Open your Passport to review your code words and justifications.'
         : lastCore
-          ? 'You have completed all 8 core missions! The Pro missions are waiting.'
+          ? (CORE_ONLY ? 'You have completed all 8 core missions. Well done! Open your Passport to see every code word.' : 'You have completed all 8 core missions! The Pro missions are waiting.')
           : `${missionName(next)} (“${next.title}”) is now unlocked!`;
-      nextBtn.hidden = !next;
+      nextBtn.hidden = !next || (CORE_ONLY && lastCore);
       nextBtn.textContent = lastCore ? 'Start the Pro Missions →' : 'Unlock & Start Next Mission →';
       nextBtn.onclick = () => {
         document.getElementById('modal-debrief').hidden = true;
@@ -1032,6 +1034,7 @@
   function openPassport() {
     const grid = document.getElementById('passport-grid');
     grid.innerHTML = NB.MISSIONS.map((m, i) => {
+      if (CORE_ONLY && i >= PRO_START) return '';
       const code = state.done[i];
       return `
         <div class="pass-item ${code ? 'done' : ''} ${m.track === 'pro' ? 'pro' : ''}">
@@ -1050,7 +1053,7 @@
 
   /* ---------- Mission Switching & Controls ---------- */
   function selectMission(idx) {
-    if (!isUnlocked(idx)) return;
+    if (!isUnlocked(idx) || (CORE_ONLY && idx >= PRO_START)) return;
     state.m = idx;
     state.track = trackOf(idx);
     state.selectedId = null;
