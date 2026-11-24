@@ -1094,3 +1094,6 @@ body.mode-core .track-switch, body.mode-core #btn-teacher { display: none !impor
   .studio-preview-col { position: sticky; top: 0; align-self: start; }
   #studio-preview { height: clamp(220px, 40vh, 400px); }
 }
+
+/* a pupil's page is always drawn as a normal light web page, whatever theme the app is in */
+.preview-frame { color-scheme: light; }
