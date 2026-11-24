@@ -180,14 +180,14 @@ NB.WebStudio = (function () {
 
   function buildDocument(mode, customHtml, customCss) {
     if (mode === 'defaced') {
-      return `<!doctype html><html><body style="margin:0;padding:24px;background:#1b0b12;color:#ff5d8f;font-family:monospace;text-align:center;">
+      return `<!doctype html><html><head><meta name="color-scheme" content="light"></head><body style="margin:0;padding:24px;background:#1b0b12;color:#ff5d8f;font-family:monospace;text-align:center;">
         <h1 style="font-size:2rem;margin:10px 0;">SITE DEFACED!</h1>
         <p style="color:#ffd6e0;font-size:1rem;">An unauthorised packet from the Internet overwrote <strong>index.html</strong> on your Web Server!</p>
         <p style="color:#ffc83d;font-size:0.9rem;">Fix: a <strong>Firewall</strong> must check every packet before it reaches the Router.</p>
       </body></html>`;
     }
     if (mode === 'unreachable') {
-      return `<!doctype html><html><body style="margin:0;padding:22px 16px;background:#f3f8ff;color:#1b2440;font-family:sans-serif;text-align:center;">
+      return `<!doctype html><html><head><meta name="color-scheme" content="light"></head><body style="margin:0;padding:22px 16px;background:#f3f8ff;color:#1b2440;font-family:sans-serif;text-align:center;">
         <div style="font-size:2.2rem;font-weight:900;color:#56628a;">!</div>
         <h1 style="font-size:1.1rem;margin:6px 0;">Can't reach this page</h1>
         <p style="font-size:0.85rem;color:#56628a;">This device has no link to the Router, so its request has nowhere to go.</p>
@@ -200,7 +200,7 @@ NB.WebStudio = (function () {
       : stripScripts(customCss !== undefined ? customCss : (live ? data.deployedCss : data.css)).replace(/<\/style/gi, '');
     return `<!doctype html>
 <html lang="en-GB">
-<head><meta charset="utf-8"><style>${css}</style></head>
+<head><meta charset="utf-8"><meta name="color-scheme" content="light"><style>html{color-scheme:light;background:#fff;color:#000}</style><style>${css}</style></head>
 <body>${html}</body>
 </html>`;
   }
