@@ -178,6 +178,15 @@ NB.WebStudio = (function () {
     return { html, css: css.trim() };
   }
 
+  /* Put a page into a preview frame. Chrome leaves a frame blank if its page was loaded while the frame was hidden and the
+     same page is then set again, so pages are only loaded while the frame is visible, and an unchanged page is not re-set. */
+  function showPage(frame, html) {
+    if (frame.dataset.shown === html && frame.hasAttribute('srcdoc')) return;
+    frame.dataset.shown = html;
+    frame.removeAttribute('srcdoc');
+    requestAnimationFrame(() => { if (frame.dataset.shown === html) frame.srcdoc = html; });
+  }
+
   function buildDocument(mode, customHtml, customCss) {
     if (mode === 'defaced') {
       return `<!doctype html><html><head><meta name="color-scheme" content="light"></head><body style="margin:0;padding:24px;background:#1b0b12;color:#ff5d8f;font-family:monospace;text-align:center;">
@@ -200,7 +209,7 @@ NB.WebStudio = (function () {
       : stripScripts(customCss !== undefined ? customCss : (live ? data.deployedCss : data.css)).replace(/<\/style/gi, '');
     return `<!doctype html>
 <html lang="en-GB">
-<head><meta charset="utf-8"><meta name="color-scheme" content="light"><style>html{color-scheme:light;background:#fff;color:#000}</style><style>${css}</style></head>
+<head><meta charset="utf-8"><meta name="color-scheme" content="light"><style>html{color-scheme:light}</style><style>${css}</style></head>
 <body>${html}</body>
 </html>`;
   }
@@ -312,7 +321,7 @@ NB.WebStudio = (function () {
     if (data.mode === 'guided') renderGuided();
     if (data.mode === 'independent') renderIndependent();
 
-    el('studio-preview').srcdoc = buildDocument('normal', data.html, data.css);
+    if (!el('modal-studio').hidden) showPage(el('studio-preview'), buildDocument('normal', data.html, data.css));
     el('studio-url').textContent = 'preview only · ' + getAddress();
 
     const checks = baseChecks(data.html, data.css);
@@ -419,6 +428,7 @@ NB.WebStudio = (function () {
 
   function open() {
     el('modal-studio').hidden = false;
+    el('studio-preview').dataset.shown = '';      // force a fresh load now that the frame is on screen
     refresh();
   }
 
@@ -440,7 +450,7 @@ NB.WebStudio = (function () {
   const getAddress = () => `www.${data.site}.eltham`;
 
   return {
-    init, open, resetAll, buildDocument, getPacketSnippets, goLive, parsePasted, getAddress,
+    init, open, resetAll, buildDocument, showPage, getPacketSnippets, goLive, parsePasted, getAddress,
     isDeployed: () => data.deployed,
     isReady: () => data.ready,
     getVersion: () => data.version,

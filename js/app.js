@@ -804,7 +804,8 @@
           <div class="browser-chrome"><span class="b-dot red"></span><span class="b-dot yellow"></span><span class="b-dot green"></span><span class="b-url">${addr}</span></div>
           <iframe class="preview-frame client-frame" title="${escapeHtml(r.label)} browser" sandbox=""></iframe>
           <div class="client-status">${status}</div>`;
-        card.querySelector('iframe').srcdoc = NB.WebStudio.buildDocument(r.mode);
+        { const fr = card.querySelector('iframe'), page = NB.WebStudio.buildDocument(r.mode);   // load once the card is on screen
+          requestAnimationFrame(() => requestAnimationFrame(() => NB.WebStudio.showPage(fr, page))); }
         if (r.mode === 'unstyled') {
           const btn = document.createElement('button');
           btn.type = 'button';
@@ -878,7 +879,8 @@
   function openClientBrowser(cfg) {
     document.getElementById('client-browser-title').textContent = cfg.title;
     document.getElementById('client-browser-sub').textContent = cfg.sub;
-    document.getElementById('client-browser-frame').srcdoc = NB.WebStudio.buildDocument(cfg.mode);
+    const cbf = document.getElementById('client-browser-frame'); cbf.dataset.shown = '';
+    requestAnimationFrame(() => NB.WebStudio.showPage(cbf, NB.WebStudio.buildDocument(cfg.mode)));   // load it once the window is on screen
 
     const inspect = document.getElementById('packet-inspect');
     if (cfg.packets && cfg.packets.length) {
